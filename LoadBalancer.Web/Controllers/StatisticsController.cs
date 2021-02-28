@@ -20,7 +20,7 @@ namespace LoadBalancer.Web.Controllers
             return Ok(_storage.GetAll().Select(arg =>
             {
                 var (server, statistics) = arg;
-                return $"{server.Host}: Online - {statistics.IsOnline}, Sessions - {statistics.CurrentSessionsCount}";
+                return $"{server.Name}: Online - {statistics.IsOnline}, Sessions - {statistics.CurrentSessionsCount}";
             }));
         }
     }

@@ -1,17 +1,16 @@
 using System.Threading.Tasks;
-using LoadBalancer.Domain;
 using Quartz;
 
 namespace LoadBalancer.Web.Extensions
 {
     internal static class SchedulerExtensions
     {
-        internal static async Task RegisterJobAsync(this IScheduler scheduler,
+        internal static async Task RegisterJobAsync<T>(this IScheduler scheduler,
             int intervalInSeconds,
             string taskPrefix,
-            string jobDescription = "")
+            string jobDescription = "") where T : IJob
         {
-            var job = JobBuilder.Create<RetrieveOlapStatisticsTask>()
+            var job = JobBuilder.Create<T>()
                 .WithIdentity($"{taskPrefix}Task")
                 .RequestRecovery()
                 .WithDescription(jobDescription)

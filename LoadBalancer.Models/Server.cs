@@ -11,6 +11,7 @@ namespace LoadBalancer.Models
         private readonly string _database;
         private readonly string _username;
         private readonly string _password;
+        private readonly string _name;
 
         public string Host
         {
@@ -40,6 +41,12 @@ namespace LoadBalancer.Models
         {
             get => _password ?? "postgres";
             init => _password = value;
+        }
+        
+        public string Name
+        {
+            get => _name ?? _host;
+            init => _name = value;
         }
 
         public string AsConnectionString()

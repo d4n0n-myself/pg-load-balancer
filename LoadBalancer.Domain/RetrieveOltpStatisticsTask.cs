@@ -26,7 +26,7 @@ namespace LoadBalancer.Domain
 
         public async Task Execute(IJobExecutionContext context)
         {
-            _logger.LogInformation($"Get stats for Olap {DateTime.Now}");
+            _logger.LogInformation($"Get stats for Oltp {DateTime.Now}");
             var servers = _configuration.OltpPool;
 
             foreach (var server in servers)

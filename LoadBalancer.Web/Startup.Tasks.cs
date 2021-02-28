@@ -1,5 +1,6 @@
 using System;
 using System.Threading.Tasks;
+using LoadBalancer.Domain;
 using LoadBalancer.Models;
 using LoadBalancer.Web.Extensions;
 using LoadBalancer.Web.Factories;
@@ -32,9 +33,9 @@ namespace LoadBalancer.Web
             var olapRefreshInterval = balancerConfiguration.RefreshOlapStatisticsIntervalInSec;
             var oltpRefreshInterval = balancerConfiguration.RefreshOltpStatisticsIntervalInSec;
 
-            await scheduler.RegisterJobAsync(olapRefreshInterval, "olapStats",
+            await scheduler.RegisterJobAsync<RetrieveOlapStatisticsTask>(olapRefreshInterval, "olapStats",
                 "Request statistics from PostgreSQL server");
-            await scheduler.RegisterJobAsync(oltpRefreshInterval, "oltpStats",
+            await scheduler.RegisterJobAsync<RetrieveOltpStatisticsTask>(oltpRefreshInterval, "oltpStats",
                 "Request statistics from PostgreSQL server");
         }
     }
