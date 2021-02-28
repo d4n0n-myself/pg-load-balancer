@@ -1,7 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
 
-namespace LoadBalancer.Web
+namespace LoadBalancer.Web.Controllers
 {
     [Route("{controller}/{action}")]
     public class ResponseController : Controller

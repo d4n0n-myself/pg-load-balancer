@@ -2,11 +2,12 @@
 using System.Threading.Tasks;
 using Dapper;
 using LoadBalancer.Models;
+using Microsoft.Extensions.Logging;
 using Npgsql;
 
 namespace LoadBalancer.Database
 {
-    public class StatisticsRepository : IStatisticsRepository
+    public class StatisticsRepository : IStatisticsRepository, IDisposable
     {
         private readonly ILogger<StatisticsRepository> _logger;
 
@@ -31,13 +32,18 @@ namespace LoadBalancer.Database
             }
             catch (Exception e)
             {
-                _logger.LogWarning(e, $"Failed to retrieve statistics for server {server.Host}");
+                _logger.LogWarning($"Failed to retrieve statistics for server {server.Host}: {e.Message}");
                 var failedStatistics = new Statistics
                 {
                     IsOnline = false
                 };
                 return failedStatistics;
             }
+        }
+        
+        public void Dispose()
+        {
+            // do nothing
         }
     }
 }

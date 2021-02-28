@@ -1,3 +1,7 @@
+using System.Threading.Tasks;
+using LoadBalancer.Database;
+using LoadBalancer.Domain;
+using LoadBalancer.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -7,14 +11,14 @@ using Microsoft.OpenApi.Models;
 
 namespace LoadBalancer.Web
 {
-    public class Startup
+    public partial class Startup
     {
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
         }
 
-        public IConfiguration Configuration { get; }
+        private IConfiguration Configuration { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -22,19 +26,36 @@ namespace LoadBalancer.Web
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo {Title = "LoadBalancer.Web", Version = "v1"});
+                c.SwaggerDoc("v1", new OpenApiInfo {Title = "LoadBalancer", Version = "v1"});
             });
+
+            services.Configure<BalancerConfiguration>(Configuration);
+
+            services.AddScoped<IStatisticsRepository, StatisticsRepository>();
+            services.AddSingleton<IStatisticsStorage, StatisticsStorage>();
+
+            services.AddTransient<RetrieveOlapStatisticsTask>();
+            services.AddTransient<RetrieveOltpStatisticsTask>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            var container = app.ApplicationServices;
+
+            Task.Run(async () => await RegisterTasks(container)).Wait();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "LoadBalancer.Web v1"));
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+                {
+                    c.DisplayRequestDuration();
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "LoadBalancer.Web v1");
+                });
 
             app.UseHttpsRedirection();
 
@@ -43,6 +64,8 @@ namespace LoadBalancer.Web
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+
+            ApplicationContext.Current = new ApplicationContext {Container = app.ApplicationServices};
         }
     }
 }

@@ -4,5 +4,7 @@ namespace LoadBalancer.Models
     {
         public bool IsOnline { get; init; }
         public int CurrentSessionsCount { get; init; }
+
+        public static Statistics Empty => new();
     }
 }

@@ -8,15 +8,15 @@ using Quartz;
 
 namespace LoadBalancer.Domain
 {
-    public class RetrieveOlapStatisticsTask : IJob
+    public class RetrieveOltpStatisticsTask : IJob
     {
         private readonly BalancerConfiguration _configuration;
         private readonly IStatisticsRepository _repository;
         private readonly IStatisticsStorage _storage;
-        private readonly ILogger<RetrieveOlapStatisticsTask> _logger;
+        private readonly ILogger<RetrieveOltpStatisticsTask> _logger;
 
-        public RetrieveOlapStatisticsTask(IOptions<BalancerConfiguration> configuration,
-            IStatisticsRepository repository, IStatisticsStorage storage, ILogger<RetrieveOlapStatisticsTask> logger)
+        public RetrieveOltpStatisticsTask(IOptions<BalancerConfiguration> configuration,
+            IStatisticsRepository repository, IStatisticsStorage storage, ILogger<RetrieveOltpStatisticsTask> logger)
         {
             _repository = repository;
             _storage = storage;
@@ -27,7 +27,7 @@ namespace LoadBalancer.Domain
         public async Task Execute(IJobExecutionContext context)
         {
             _logger.LogInformation($"Get stats for Olap {DateTime.Now}");
-            var servers = _configuration.OlapPool;
+            var servers = _configuration.OltpPool;
 
             foreach (var server in servers)
             {

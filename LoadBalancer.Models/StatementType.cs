@@ -1,4 +1,4 @@
-namespace LoadBalancer.Domain
+namespace LoadBalancer.Models
 {
     public enum StatementType
     {

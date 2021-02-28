@@ -1,50 +1,50 @@
-using System.Data.Common;
+// ReSharper disable MemberCanBePrivate.Global
+// ReSharper disable UnusedMember.Global
+// ReSharper disable ClassNeverInstantiated.Global
 
 namespace LoadBalancer.Models
 {
     public class Server
     {
-        private Server()
+        private readonly string _host;
+        private readonly string _port;
+        private readonly string _database;
+        private readonly string _username;
+        private readonly string _password;
+
+        public string Host
         {
+            get => _host ?? "localhost";
+            init => _host = value;
         }
 
-        public Server(string connectionString)
+        public string Port
         {
-            var builder = new DbConnectionStringBuilder {ConnectionString = connectionString};
-            Host = (string) builder["Host"];
-            Port = (string) builder["Port"];
-            Database = (string) builder["Database"];
-            Username = (string) builder["Username"];
-            Password = (string) builder["Password"];
-            _connectionString = connectionString;
+            get => _port ?? "5432"; 
+            init => _port = value;
         }
-        
-        public string Host { get; private init; }
-        public string Port { get; private init; }
-        public string Database { get; private init; }
-        public string Username { get; private init; }
-        public string Password { get; private init; }
 
-        private string _connectionString;
-
-        public static Server FromConnectionString(string connectionString)
+        public string Database
         {
-            var builder = new DbConnectionStringBuilder {ConnectionString = connectionString};
-            var server = new Server
-            {
-                Host = (string) builder["Host"],
-                Port = (string) builder["Port"],
-                Database = (string) builder["Database"],
-                Username = (string) builder["Username"],
-                Password = (string) builder["Password"],
-                _connectionString = connectionString
-            };
-            return server;
+            get => _database ?? "postgres";
+            init => _database = value;
+        }
+
+        public string Username
+        {
+            get => _username ?? "postgres";
+            init => _username = value;
+        }
+
+        public string Password
+        {
+            get => _password ?? "postgres";
+            init => _password = value;
         }
 
         public string AsConnectionString()
         {
-            return _connectionString;
+            return $"Host={Host};Port={Port};Database={Database};Username={Username};Password={Password}";
         }
     }
 }
