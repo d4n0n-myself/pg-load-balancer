@@ -1,7 +1,10 @@
 using System.Threading.Tasks;
-using LoadBalancer.Database;
-using LoadBalancer.Domain;
-using LoadBalancer.Models;
+using LoadBalancer.Database.Query;
+using LoadBalancer.Database.Statistics;
+using LoadBalancer.Domain.Services;
+using LoadBalancer.Domain.Storage;
+using LoadBalancer.Domain.Tasks;
+using LoadBalancer.Models.System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -32,10 +35,13 @@ namespace LoadBalancer.Web
             services.Configure<BalancerConfiguration>(Configuration);
 
             services.AddScoped<IStatisticsRepository, StatisticsRepository>();
+            services.AddScoped<IQueryExecutor, QueryExecutor>();
+            services.AddScoped<IQueryDistributionService, QueryDistributionService>();
+            
             services.AddSingleton<IStatisticsStorage, StatisticsStorage>();
 
-            services.AddTransient<RetrieveOlapStatisticsTask>();
-            services.AddTransient<RetrieveOltpStatisticsTask>();
+            services.AddTransient<RetrieveOlapStatisticsTask>(); // todo scoped ?
+            services.AddTransient<RetrieveOltpStatisticsTask>(); // todo scoped ?
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

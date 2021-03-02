@@ -2,7 +2,7 @@
 // ReSharper disable UnusedMember.Global
 // ReSharper disable ClassNeverInstantiated.Global
 
-namespace LoadBalancer.Models
+namespace LoadBalancer.Models.Entities
 {
     public class Server
     {

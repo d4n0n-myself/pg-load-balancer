@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Dapper;
-using LoadBalancer.Models;
+using LoadBalancer.Models.Entities;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 
-namespace LoadBalancer.Database
+namespace LoadBalancer.Database.Statistics
 {
     public class StatisticsRepository : IStatisticsRepository, IDisposable
     {
@@ -16,14 +16,14 @@ namespace LoadBalancer.Database
             _logger = logger;
         }
 
-        public async Task<Statistics> GetStatistics(Server server)
+        public async Task<Models.Entities.Statistics> GetStatistics(Server server)
         {
             await using var npgsqlConnection = new NpgsqlConnection(server.AsConnectionString());
             try
             {
                 var sessionsCount =
                     await npgsqlConnection.ExecuteScalarAsync<int>("SELECT COUNT(*) FROM pg_stat_activity");
-                var successfulStatistics = new Statistics
+                var successfulStatistics = new Models.Entities.Statistics
                 {
                     CurrentSessionsCount = sessionsCount,
                     IsOnline = true
@@ -33,7 +33,7 @@ namespace LoadBalancer.Database
             catch (Exception e)
             {
                 _logger.LogWarning($"Failed to retrieve statistics for server {server.Host}: {e.Message}");
-                var failedStatistics = new Statistics
+                var failedStatistics = new Models.Entities.Statistics
                 {
                     IsOnline = false
                 };

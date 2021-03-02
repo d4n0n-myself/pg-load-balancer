@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
-using LoadBalancer.Domain;
-using LoadBalancer.Models;
+using LoadBalancer.Domain.Tasks;
+using LoadBalancer.Models.System;
 using LoadBalancer.Web.Extensions;
 using LoadBalancer.Web.Factories;
 using Microsoft.Extensions.DependencyInjection;

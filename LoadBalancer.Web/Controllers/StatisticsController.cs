@@ -1,5 +1,6 @@
 using System.Linq;
-using LoadBalancer.Domain;
+using LoadBalancer.Domain.Storage;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LoadBalancer.Web.Controllers
@@ -15,6 +16,7 @@ namespace LoadBalancer.Web.Controllers
 
         [Route("statistics")]
         [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
         public IActionResult Get()
         {
             return Ok(_storage.GetAll().Select(arg =>

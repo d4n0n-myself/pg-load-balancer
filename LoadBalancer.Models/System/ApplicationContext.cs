@@ -1,6 +1,6 @@
 using System;
 
-namespace LoadBalancer.Models
+namespace LoadBalancer.Models.System
 {
     public class ApplicationContext
     {

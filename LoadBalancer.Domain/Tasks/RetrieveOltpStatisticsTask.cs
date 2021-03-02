@@ -1,12 +1,14 @@
 using System;
 using System.Threading.Tasks;
-using LoadBalancer.Database;
-using LoadBalancer.Models;
+using LoadBalancer.Database.Statistics;
+using LoadBalancer.Domain.Storage;
+using LoadBalancer.Models.Enums;
+using LoadBalancer.Models.System;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Quartz;
 
-namespace LoadBalancer.Domain
+namespace LoadBalancer.Domain.Tasks
 {
     public class RetrieveOltpStatisticsTask : IJob
     {
@@ -32,7 +34,7 @@ namespace LoadBalancer.Domain
             foreach (var server in servers)
             {
                 var stats = await _repository.GetStatistics(server);
-                _storage.Set(server, stats);
+                _storage.Set(QueryType.Oltp, server, stats);
             }
         }
     }
