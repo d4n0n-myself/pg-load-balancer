@@ -10,6 +10,9 @@ using Quartz;
 
 namespace LoadBalancer.Domain.Tasks
 {
+    /// <summary>
+    /// Oltp server statistics updater job.
+    /// </summary>
     public class RetrieveOltpStatisticsTask : IJob
     {
         private readonly BalancerConfiguration _configuration;

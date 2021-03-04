@@ -39,6 +39,7 @@ namespace LoadBalancer.Web
             services.AddScoped<IQueryDistributionService, QueryDistributionService>();
             
             services.AddSingleton<IStatisticsStorage, StatisticsStorage>();
+            services.AddSingleton<IResponseStorage, ResponseStorage>();
 
             services.AddTransient<RetrieveOlapStatisticsTask>(); // todo scoped ?
             services.AddTransient<RetrieveOltpStatisticsTask>(); // todo scoped ?

@@ -7,6 +7,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LoadBalancer.Web.Controllers
 {
+    /// <summary>
+    /// Balancing pipeline accessor.
+    /// </summary>
     [Route("")]
     public class RequestController : Controller
     {
@@ -17,6 +20,9 @@ namespace LoadBalancer.Web.Controllers
             _service = service;
         }
 
+        /// <summary>
+        /// Balance SQL query. 
+        /// </summary>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]

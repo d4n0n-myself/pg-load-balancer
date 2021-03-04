@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LoadBalancer.Web.Controllers
 {
+    /// <summary>
+    /// Query response accessor.
+    /// </summary>
     [Route("{controller}/{action}")]
     public class ResponseController : Controller
     {
@@ -14,6 +17,10 @@ namespace LoadBalancer.Web.Controllers
         {
             _storage = storage;
         }
+        
+        /// <summary>
+        /// Get response for request with <see cref="requestId"/>.
+        /// </summary>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

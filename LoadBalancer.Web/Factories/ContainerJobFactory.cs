@@ -6,6 +6,9 @@ using Quartz.Spi;
 
 namespace LoadBalancer.Web.Factories
 {
+    /// <summary>
+    /// Quartz task factory with dependency injection and scopes.
+    /// </summary>
     internal class ContainerJobFactory : IJobFactory
     {
         private readonly IServiceProvider _serviceProvider;

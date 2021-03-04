@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace LoadBalancer.Web.Controllers
 {
+    /// <summary>
+    /// Statistics accessor.
+    /// </summary>
     public class StatisticsController : Controller
     {
         private readonly IStatisticsStorage _storage;
@@ -14,6 +17,9 @@ namespace LoadBalancer.Web.Controllers
             _storage = storage;
         }
 
+        /// <summary>
+        /// Get statistics for all servers. No format, pretty-print.
+        /// </summary>
         [Route("statistics")]
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]

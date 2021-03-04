@@ -3,8 +3,14 @@ using Quartz;
 
 namespace LoadBalancer.Web.Extensions
 {
+    /// <summary>
+    /// Quartz tasks scheduler extensions.
+    /// </summary>
     internal static class SchedulerExtensions
     {
+        /// <summary>
+        /// Register domain task with given interval.
+        /// </summary>
         internal static async Task RegisterJobAsync<T>(this IScheduler scheduler,
             int intervalInSeconds,
             string taskPrefix,
