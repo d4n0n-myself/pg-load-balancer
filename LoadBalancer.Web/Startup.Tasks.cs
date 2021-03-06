@@ -37,6 +37,8 @@ namespace LoadBalancer.Web
                 "Request statistics from PostgreSQL server");
             await scheduler.RegisterJobAsync<RetrieveOltpStatisticsTask>(oltpRefreshInterval, "oltpStats",
                 "Request statistics from PostgreSQL server");
+            await scheduler.RegisterJobAsync<RetryRequestExecutionTask>(oltpRefreshInterval, "retryRequest",
+                "Query retry execution runner");
         }
     }
 }

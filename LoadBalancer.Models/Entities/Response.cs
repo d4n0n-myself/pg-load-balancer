@@ -1,4 +1,5 @@
 using System;
+using LoadBalancer.Models.Enums;
 
 namespace LoadBalancer.Models.Entities
 {
@@ -10,21 +11,35 @@ namespace LoadBalancer.Models.Entities
         /// <summary>
         /// Identifier for client to retrieve response by.
         /// </summary>
-        public Guid RequestId { get; set; }
+        public Guid? RequestId { get; set; }
         
         /// <summary>
         /// Query execution result.
         /// </summary>
-        public bool Success { get; set; }
+        public QueryExecutionResult Result { get; init; }
         
         /// <summary>
         /// Error messages, PG exceptions mostly. Is not empty when <see cref="Success"/> == false.
         /// </summary>
-        public string ErrorMessage { get; set; }
+        public string Message { get; init; }
 
         /// <summary>
         /// Query response (serialized). 
         /// </summary>
-        public string QueryData { get; set; }
+        public string Data { get; init; }
+        
+        public static Response Completed(string data = null) =>
+            new() {Result = QueryExecutionResult.QueryCompleted, Data = data};
+
+        public static Response Queued(Guid requestId) =>
+            new() {Result = QueryExecutionResult.QueryQueued, RequestId = requestId};
+
+        public static Response Fail(string errorMessage = null, Guid? requestId = null) =>
+            new()
+            {
+                Result = QueryExecutionResult.QueryFailed,
+                Message = errorMessage,
+                RequestId = requestId
+            };
     }
 }

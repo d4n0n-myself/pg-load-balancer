@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using LoadBalancer.Database.Statistics;
-using LoadBalancer.Domain.Storage;
+using LoadBalancer.Domain.Storage.Statistics;
 using LoadBalancer.Models.Enums;
 using LoadBalancer.Models.System;
 using Microsoft.Extensions.Logging;

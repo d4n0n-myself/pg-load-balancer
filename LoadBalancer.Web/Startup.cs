@@ -2,7 +2,9 @@ using System.Threading.Tasks;
 using LoadBalancer.Database.Query;
 using LoadBalancer.Database.Statistics;
 using LoadBalancer.Domain.Services;
-using LoadBalancer.Domain.Storage;
+using LoadBalancer.Domain.Storage.Request;
+using LoadBalancer.Domain.Storage.Response;
+using LoadBalancer.Domain.Storage.Statistics;
 using LoadBalancer.Domain.Tasks;
 using LoadBalancer.Models.System;
 using Microsoft.AspNetCore.Builder;
@@ -39,6 +41,7 @@ namespace LoadBalancer.Web
             services.AddScoped<IQueryDistributionService, QueryDistributionService>();
             
             services.AddSingleton<IStatisticsStorage, StatisticsStorage>();
+            services.AddSingleton<IRequestQueue, RequestQueue>();
             services.AddSingleton<IResponseStorage, ResponseStorage>();
 
             services.AddTransient<RetrieveOlapStatisticsTask>(); // todo scoped ?
@@ -59,10 +62,10 @@ namespace LoadBalancer.Web
 
             app.UseSwagger();
             app.UseSwaggerUI(c =>
-                {
-                    c.DisplayRequestDuration();
-                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "LoadBalancer.Web v1");
-                });
+            {
+                c.DisplayRequestDuration();
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "LoadBalancer.Web v1");
+            });
 
             app.UseHttpsRedirection();
 

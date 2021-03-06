@@ -8,26 +8,26 @@ using LoadBalancer.Models.Enums;
 using LoadBalancer.Models.System;
 using Microsoft.Extensions.Options;
 
-namespace LoadBalancer.Domain.Storage
+namespace LoadBalancer.Domain.Storage.Statistics
 {
     public class StatisticsStorage : IStatisticsStorage
     {
-        private readonly ConcurrentDictionary<Server, Statistics> _olapStatisticsMap;
-        private readonly ConcurrentDictionary<Server, Statistics> _oltpStatisticsMap;
+        private readonly ConcurrentDictionary<Server, Models.Entities.Statistics> _olapStatisticsMap;
+        private readonly ConcurrentDictionary<Server, Models.Entities.Statistics> _oltpStatisticsMap;
 
         public StatisticsStorage(IOptions<BalancerConfiguration> options)
         {
             var configuration = options.Value;
 
-            _olapStatisticsMap = new ConcurrentDictionary<Server, Statistics>(
+            _olapStatisticsMap = new ConcurrentDictionary<Server, Models.Entities.Statistics>(
                 configuration.OlapPool.MapConfigurationSection()
             );
-            _oltpStatisticsMap = new ConcurrentDictionary<Server, Statistics>(
+            _oltpStatisticsMap = new ConcurrentDictionary<Server, Models.Entities.Statistics>(
                 configuration.OltpPool.MapConfigurationSection()
             );
         }
 
-        public IDictionary<Server, Statistics> Get(QueryType type)
+        public IDictionary<Server, Models.Entities.Statistics> Get(QueryType type)
         {
             return type switch
             {
@@ -37,7 +37,7 @@ namespace LoadBalancer.Domain.Storage
             };
         }
 
-        public IEnumerable<(Server, Statistics)> GetAll()
+        public IEnumerable<(Server, Models.Entities.Statistics)> GetAll()
         {
             return _olapStatisticsMap
                 .Concat(_oltpStatisticsMap)
@@ -48,7 +48,7 @@ namespace LoadBalancer.Domain.Storage
                 });
         }
 
-        public void Set(QueryType type, Server server, Statistics statistics)
+        public void Set(QueryType type, Server server, Models.Entities.Statistics statistics)
         {
             _ = type == QueryType.Oltp
                 ? _oltpStatisticsMap.AddOrUpdate(server, statistics, (_, _) => statistics)

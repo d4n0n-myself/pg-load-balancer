@@ -1,5 +1,5 @@
 using System;
-using LoadBalancer.Domain.Storage;
+using LoadBalancer.Domain.Storage.Response;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,6 +9,7 @@ namespace LoadBalancer.Web.Controllers
     /// Query response accessor.
     /// </summary>
     [Route("{controller}/{action}")]
+    [UnhandledExceptionCoverage]
     public class ResponseController : Controller
     {
         private readonly IResponseStorage _storage;
@@ -24,6 +25,7 @@ namespace LoadBalancer.Web.Controllers
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public IActionResult GetResponse([FromQuery] Guid requestId)
         {
             if (_storage.TryGetResponseByRequestId(requestId, out var response))

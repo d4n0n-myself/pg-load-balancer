@@ -11,6 +11,6 @@ namespace LoadBalancer.Domain.Services
         /// <summary>
         /// Determine server and execute query.
         /// </summary>
-        Task<object> DistributeQuery(Request request);
+        Task<Response> DistributeQueryAsync(Request request);
     }
 }

@@ -2,7 +2,9 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 using LoadBalancer.Database.Query;
-using LoadBalancer.Domain.Storage;
+using LoadBalancer.Domain.Storage.Request;
+using LoadBalancer.Domain.Storage.Response;
+using LoadBalancer.Domain.Storage.Statistics;
 using LoadBalancer.Models.Entities;
 using LoadBalancer.Models.System;
 using Microsoft.Extensions.Options;
@@ -14,20 +16,22 @@ namespace LoadBalancer.Domain.Services
     public class QueryDistributionService : IQueryDistributionService
     {
         private readonly IStatisticsStorage _statisticsStorage;
-        private readonly IResponseStorage _responseStorage;
         private readonly IQueryExecutor _queryExecutor;
         private readonly BalancerConfiguration _configuration;
+        private readonly IResponseStorage _responseStorage;
+        private readonly IRequestQueue _queue;
 
-        public QueryDistributionService(IStatisticsStorage statisticsStorage, IResponseStorage responseStorage, 
-            IQueryExecutor queryExecutor, IOptions<BalancerConfiguration> options)
+        public QueryDistributionService(IStatisticsStorage statisticsStorage, IQueryExecutor queryExecutor,
+            IOptions<BalancerConfiguration> options, IResponseStorage responseStorage, IRequestQueue queue)
         {
             _statisticsStorage = statisticsStorage;
-            _responseStorage = responseStorage;
             _queryExecutor = queryExecutor;
+            _responseStorage = responseStorage;
+            _queue = queue;
             _configuration = options.Value;
         }
 
-        public async Task<object> DistributeQuery(Request request)
+        public async Task<Response> DistributeQueryAsync(Request request)
         {
             var servers = _statisticsStorage.Get(request.Type);
             var maxSessions = _configuration.GetMaxSessionsParameter(request.Type);
@@ -36,7 +40,7 @@ namespace LoadBalancer.Domain.Services
 
             if (availableServer == null)
             {
-                return RetryOrFail(request);
+                return HandleNoAvailableServerScenario(request);
             }
 
             var serializedData = string.Empty;
@@ -54,22 +58,17 @@ namespace LoadBalancer.Domain.Services
 
                 if (request.IsRetried)
                 {
-                    _responseStorage.Add(new Response
-                    {
-                        Success = true,
-                        QueryData = serializedData,
-                        RequestId = request.RequestId
-                    });
+                    _responseStorage.Add(Response.Completed(serializedData, request.RequestId));
                 }
 
-                return Ok(serializedData);
+                return Response.Completed(serializedData);
             }
             catch (Exception e)
             {
                 // if not postgres error, must be system error
                 // postgres errors are client-side problems
                 if (e is not NpgsqlException npgsqlException) 
-                    return RetryOrFail(request);
+                    return HandleNoAvailableServerScenario(request);
                 
                 if (!request.IsRetried && !request.AcceptRetries) 
                     throw npgsqlException;
@@ -78,7 +77,7 @@ namespace LoadBalancer.Domain.Services
                 if (request.CurrentRetryAttempt < maxRetryCount)
                 {
                     // enqueue for retry
-                    return QueuedForRetry(request.RequestId);
+                    return Response.Queued(request.RequestId);
                 }
                 
                 _responseStorage.Add(new Response
@@ -91,31 +90,33 @@ namespace LoadBalancer.Domain.Services
             }
         }
 
-        private object RetryOrFail(Request request)
+        private Response HandleNoAvailableServerScenario(Request request)
         {
             // failing if request does not support queue
             if (!request.AcceptRetries)
                 throw new Exception("Cant execute that rn");
 
-            var maxRetryCount = _configuration.MaxRetryCount;
-            if (request.IsRetried && request.CurrentRetryAttempt >= maxRetryCount)
-            {
-                _responseStorage.Add(new Response
+                var maxRetryCount = _configuration.MaxRetryCount;
+                if (request.IsRetried && request.CurrentRetryAttempt >= maxRetryCount)
                 {
-                    Success = false,
-                    ErrorMessage = "Request has failed all its attempts",
-                    RequestId = request.RequestId
-                });
-                return Fail();
+                    _responseStorage.Add(Response.Fail("Number of allowed attempts exceeded", request.RequestId));
+                    return Response.Fail();
+                }
+                
+
+                request.RequestId = Guid.NewGuid();
+                _queue.Add(request);
+                return Response.Completed(request.RequestId.ToString());
             }
 
-            request.RequestId = Guid.NewGuid();
-            // enqueue for retry 
-            return QueuedForRetry(request.RequestId);
-        }
+            if (request.IsSelect)
+            {
+                var serializedData = await _queryExecutor.QueryAsync(availableServer, request.Query);
+                return Ok(serializedData);
+            }
 
-        private static object Ok(string data = null) => new {Success = true, Data = data};
-        private static object QueuedForRetry(Guid requestId) => new {Success = true, QueuedForRetry = true, RequestId = requestId };
-        private static object Fail(string errorMessage = null) => new {Success = false, Message = errorMessage};
+            await _queryExecutor.ExecuteAsync(availableServer, request.Query);
+            return Ok();
+        }
     }
 }
