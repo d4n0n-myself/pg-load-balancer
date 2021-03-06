@@ -9,7 +9,6 @@ using LoadBalancer.Models.Entities;
 using LoadBalancer.Models.System;
 using Microsoft.Extensions.Options;
 using Npgsql;
-using Quartz.Logging;
 
 namespace LoadBalancer.Domain.Services
 {
@@ -67,26 +66,22 @@ namespace LoadBalancer.Domain.Services
             {
                 // if not postgres error, must be system error
                 // postgres errors are client-side problems
-                if (e is not NpgsqlException npgsqlException) 
+                if (e is not NpgsqlException npgsqlException)
                     return HandleNoAvailableServerScenario(request);
-                
-                if (!request.IsRetried && !request.AcceptRetries) 
+
+                if (!request.IsRetried && !request.AcceptRetries)
                     throw npgsqlException;
-                
+
                 var maxRetryCount = _configuration.MaxRetryCount;
                 if (request.CurrentRetryAttempt < maxRetryCount)
                 {
                     // enqueue for retry
                     return Response.Queued(request.RequestId);
                 }
-                
-                _responseStorage.Add(new Response
-                {
-                    Success = false,
-                    ErrorMessage = "Request has failed all its attempts",
-                    RequestId = request.RequestId
-                });
-                return Fail();
+
+                var response = Response.Fail("Request has failed all its attempts", request.RequestId);
+                _responseStorage.Add(response);
+                return response;
             }
         }
 
@@ -96,27 +91,17 @@ namespace LoadBalancer.Domain.Services
             if (!request.AcceptRetries)
                 throw new Exception("Cant execute that rn");
 
-                var maxRetryCount = _configuration.MaxRetryCount;
-                if (request.IsRetried && request.CurrentRetryAttempt >= maxRetryCount)
-                {
-                    _responseStorage.Add(Response.Fail("Number of allowed attempts exceeded", request.RequestId));
-                    return Response.Fail();
-                }
-                
-
-                request.RequestId = Guid.NewGuid();
-                _queue.Add(request);
-                return Response.Completed(request.RequestId.ToString());
-            }
-
-            if (request.IsSelect)
+            var maxRetryCount = _configuration.MaxRetryCount;
+            if (request.IsRetried && request.CurrentRetryAttempt >= maxRetryCount)
             {
-                var serializedData = await _queryExecutor.QueryAsync(availableServer, request.Query);
-                return Ok(serializedData);
+                _responseStorage.Add(Response.Fail("Number of allowed attempts exceeded", request.RequestId));
+                return Response.Fail();
             }
 
-            await _queryExecutor.ExecuteAsync(availableServer, request.Query);
-            return Ok();
+
+            request.RequestId = Guid.NewGuid();
+            _queue.Add(request);
+            return Response.Completed(request.RequestId.ToString());
         }
     }
 }

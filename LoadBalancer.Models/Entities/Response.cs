@@ -19,7 +19,7 @@ namespace LoadBalancer.Models.Entities
         public QueryExecutionResult Result { get; init; }
         
         /// <summary>
-        /// Error messages, PG exceptions mostly. Is not empty when <see cref="Success"/> == false.
+        /// Error messages, PG exceptions mostly. Is not empty when <see cref="Result"/> == <see cref="QueryExecutionResult.QueryFailed"/>.
         /// </summary>
         public string Message { get; init; }
 
@@ -28,8 +28,8 @@ namespace LoadBalancer.Models.Entities
         /// </summary>
         public string Data { get; init; }
         
-        public static Response Completed(string data = null) =>
-            new() {Result = QueryExecutionResult.QueryCompleted, Data = data};
+        public static Response Completed(string data = null, Guid? requestId = null) =>
+            new() {Result = QueryExecutionResult.QueryCompleted, Data = data, RequestId = requestId};
 
         public static Response Queued(Guid requestId) =>
             new() {Result = QueryExecutionResult.QueryQueued, RequestId = requestId};
