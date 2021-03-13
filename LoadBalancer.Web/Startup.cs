@@ -67,7 +67,7 @@ namespace LoadBalancer.Web
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "LoadBalancer.Web v1");
             });
 
-            app.UseHttpsRedirection();
+            // app.UseHttpsRedirection();
 
             app.UseRouting();
 

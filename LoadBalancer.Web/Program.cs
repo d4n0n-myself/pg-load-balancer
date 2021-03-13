@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
 
 namespace LoadBalancer.Web
 {
@@ -12,6 +14,13 @@ namespace LoadBalancer.Web
 
         private static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); });
+                .ConfigureWebHostDefaults(webBuilder => { webBuilder.UseStartup<Startup>(); })
+                .ConfigureLogging(
+                    builder =>
+                    {
+                        builder.ClearProviders();
+                        builder.AddNLog();
+                    })
+            ;
     }
 }
