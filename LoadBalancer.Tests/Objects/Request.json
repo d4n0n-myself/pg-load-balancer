@@ -1,0 +1,10 @@
+{
+  "Type": 1,
+  "IsSelect": true,
+  "Query": "SELECT * FROM my_table",
+  "AcceptRetries": true,
+  "Priority": 1,
+  "RequestId": "b2828949-6d7e-4d27-9f5e-b966fd829784",
+  "IsRetried": true,
+  "CurrentRetryAttempt": 2
+}

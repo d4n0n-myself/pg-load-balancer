@@ -1,0 +1,6 @@
+{
+  "RequestId": "b2828949-6d7e-4d27-9f5e-b966fd829784",
+  "Result": 1,
+  "Message": "test",
+  "Data": "[{\"IsOnline\":true,\"CurrentSessionsCount\":2}]"
+}

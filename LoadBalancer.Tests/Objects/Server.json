@@ -1,0 +1,8 @@
+{
+  "Host": "1.2.3.4",
+  "Port": "1234",
+  "Database": "test_db",
+  "Username": "d4n0n_myself",
+  "Password": "qwerty123",
+  "Name": "my test server"
+}

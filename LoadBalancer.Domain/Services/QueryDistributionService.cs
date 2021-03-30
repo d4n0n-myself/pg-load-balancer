@@ -32,6 +32,11 @@ namespace LoadBalancer.Domain.Services
 
         public async Task<Response> DistributeQueryAsync(Request request)
         {
+            if (!request.Validate(out var validationResult))
+            {
+                return Response.Fail(validationResult.ErrorMessage);
+            }
+            
             var servers = _statisticsStorage.Get(request.Type);
             var maxSessions = _configuration.GetMaxSessionsParameter(request.Type);
             var (availableServer, _) = servers

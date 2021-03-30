@@ -11,33 +11,43 @@ namespace LoadBalancer.Database.Query
     {
         public async Task ExecuteAsync(Server server, string query)
         {
-            await using var npgsqlConnection = new NpgsqlConnection(server.AsConnectionString());
-            await using var npgsqlTransaction = await npgsqlConnection.BeginTransactionAsync();
-            try
+            await Run(server, query, async connection =>
             {
-                await npgsqlConnection.ExecuteAsync(query);
-                await npgsqlTransaction.CommitAsync();
-            }
-            catch (Exception e)
-            {
-                throw new Exception($"Failed to execute query {query} for server {server.Host}: {e.Message}");
-            }
+                await connection.ExecuteAsync(query);
+                return string.Empty;
+            });
         }
 
         public async Task<string> QueryAsync(Server server, string query)
         {
-            await using var npgsqlConnection = new NpgsqlConnection(server.AsConnectionString());
-            await using var npgsqlTransaction = await npgsqlConnection.BeginTransactionAsync();
-            try
+            return await Run(server, query, async connection =>
             {
-                var results = await npgsqlConnection.QueryAsync(query);
-                await npgsqlTransaction.CommitAsync();
+                var results = await connection.QueryAsync(query);
                 var serialized = Serialize(results);
                 return serialized;
+            });
+        }
+
+        private static async Task<string> Run(Server server, string query, Func<NpgsqlConnection, Task<string>> action)
+        {
+            await using var connection = new NpgsqlConnection(server.AsConnectionString());
+            await connection.OpenAsync();
+
+            await using var transaction = await connection.BeginTransactionAsync();
+            try
+            {
+                var result = await action(connection);
+                await transaction.CommitAsync();
+                return result;
             }
             catch (Exception e)
             {
-                throw new Exception($"Failed to query {query} for server {server.Host}: {e.Message}");
+                await transaction.RollbackAsync();
+                throw new Exception($"Failed to execute query {query} for server {server.Host}: {e.Message}");
+            }
+            finally
+            {
+                await connection.CloseAsync();
             }
         }
 
