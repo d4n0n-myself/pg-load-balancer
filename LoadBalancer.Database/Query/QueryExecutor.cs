@@ -40,6 +40,10 @@ namespace LoadBalancer.Database.Query
                 await transaction.CommitAsync();
                 return result;
             }
+            catch (PostgresException)
+            {
+                throw;
+            }
             catch (Exception e)
             {
                 await transaction.RollbackAsync();

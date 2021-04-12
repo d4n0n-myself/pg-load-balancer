@@ -10,6 +10,8 @@
         <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.3" />
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
         <PackageReference Include="Microsoft.Extensions.Configuration.FileExtensions" Version="5.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
+        <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="5.0.0" />
         <PackageReference Include="NLog" Version="4.7.8" />
         <PackageReference Include="NLog.Extensions.Logging" Version="1.7.1" />
         <PackageReference Include="NUnit" Version="3.13.1" />
@@ -23,7 +25,11 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Database\Query" />
+      <Content Include="appsettings.json">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
     </ItemGroup>
 
 </Project>

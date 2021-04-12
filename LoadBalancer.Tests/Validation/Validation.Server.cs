@@ -12,7 +12,7 @@ namespace LoadBalancer.Tests
 
             Assert.False(server.Validate(out _));
 
-            server = new Server()
+            server = new Server
             {
                 Host = "123",
                 Port = "1234",
@@ -23,7 +23,7 @@ namespace LoadBalancer.Tests
 
             Assert.False(server.Validate(out _));
 
-            server = new Server()
+            server = new Server
             {
                 Port = "asdas",
                 Database = "asd",
@@ -34,7 +34,7 @@ namespace LoadBalancer.Tests
 
             Assert.False(server.Validate(out _));
 
-            server = new Server()
+            server = new Server
             {
                 Database = "asd",
                 Host = "1.2.3.4",

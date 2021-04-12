@@ -75,7 +75,7 @@ namespace LoadBalancer.Web
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
 
-            ApplicationContext.Current = new ApplicationContext {Container = app.ApplicationServices};
+            ApplicationContext.Container = app.ApplicationServices;
         }
     }
 }

@@ -8,7 +8,7 @@ namespace LoadBalancer.Tests
         [Test]
         public void ValidateStatistics()
         {
-            var statistics = new Statistics()
+            var statistics = new Statistics
             {
                 CurrentSessionsCount = -1
             };
@@ -19,7 +19,7 @@ namespace LoadBalancer.Tests
 
             Assert.True(statistics.Validate(out _));
 
-            statistics = new Statistics()
+            statistics = new Statistics
             {
                 IsOnline = true,
                 CurrentSessionsCount = 1

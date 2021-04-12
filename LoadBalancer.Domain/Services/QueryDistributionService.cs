@@ -67,26 +67,47 @@ namespace LoadBalancer.Domain.Services
 
                 return Response.Completed(serializedData);
             }
-            catch (Exception e)
+            catch (PostgresException postgresException)
+            {
+                var message = $"Query is not correct: {postgresException.Message}";
+                // postgres errors are client-side problems
+                if (!request.AcceptRetries)
+                    return Response.Fail(message);
+                
+                request.RequestId = Guid.NewGuid();
+                _responseStorage.Add(Response.Fail(message, request.RequestId));
+                return Response.Queued(request.RequestId);
+            }
+            catch (Exception)
             {
                 // if not postgres error, must be system error
-                // postgres errors are client-side problems
-                if (e is not NpgsqlException npgsqlException)
-                    return HandleNoAvailableServerScenario(request);
 
-                if (!request.IsRetried && !request.AcceptRetries)
-                    throw npgsqlException;
+                // failing if request does not support queue
+                if (!request.AcceptRetries)
+                    return Response.Fail("No server available right now.");
 
                 var maxRetryCount = _configuration.MaxRetryCount;
-                if (request.CurrentRetryAttempt < maxRetryCount)
+                if (request.IsRetried && request.CurrentRetryAttempt >= maxRetryCount)
                 {
-                    // enqueue for retry
-                    return Response.Queued(request.RequestId);
+                    _responseStorage.Add(Response.Fail("Number of allowed attempts exceeded", request.RequestId));
+                    return Response.Fail();
                 }
 
-                var response = Response.Fail("Request has failed all its attempts", request.RequestId);
-                _responseStorage.Add(response);
-                return response;
+                request.RequestId = Guid.NewGuid();
+                _queue.Add(request);
+                return Response.Completed(request.RequestId.ToString());
+
+                // todo
+                // var maxRetryCount = _configuration.MaxRetryCount;
+                // if (request.CurrentRetryAttempt < maxRetryCount)
+                // {
+                //     // enqueue for retry
+                //     return Response.Queued(request.RequestId);
+                // }
+                //
+                // var response = Response.Fail("Request has failed all its attempts", request.RequestId);
+                // _responseStorage.Add(response);
+                // return response;
             }
         }
 
@@ -94,7 +115,7 @@ namespace LoadBalancer.Domain.Services
         {
             // failing if request does not support queue
             if (!request.AcceptRetries)
-                throw new Exception("Cant execute that rn");
+                return Response.Fail("No server available right now.");
 
             var maxRetryCount = _configuration.MaxRetryCount;
             if (request.IsRetried && request.CurrentRetryAttempt >= maxRetryCount)
@@ -102,7 +123,6 @@ namespace LoadBalancer.Domain.Services
                 _responseStorage.Add(Response.Fail("Number of allowed attempts exceeded", request.RequestId));
                 return Response.Fail();
             }
-
 
             request.RequestId = Guid.NewGuid();
             _queue.Add(request);
