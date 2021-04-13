@@ -5,6 +5,9 @@ using NUnit.Framework;
 
 namespace LoadBalancer.Tests.Database
 {
+    /// <summary>
+    /// Test basic query execution classes.
+    /// </summary>
     public class Query
     {
         private readonly QueryExecutor _queryRunner = new ();
@@ -25,7 +28,7 @@ namespace LoadBalancer.Tests.Database
         [Test]
         public async Task RunQuery()
         {
-            var x = await _queryRunner.QueryAsync(_server, $@"SELECT 1 as ""SomeAlias""");
+            var x = await _queryRunner.QueryAsync(_server, @"SELECT 1 as ""SomeAlias""");
             Assert.AreEqual(x, "[{\"SomeAlias\":1}]");
         }
     }

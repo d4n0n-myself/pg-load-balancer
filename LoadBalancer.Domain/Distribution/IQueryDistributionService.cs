@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using LoadBalancer.Models.Entities;
 
-namespace LoadBalancer.Domain.Services
+namespace LoadBalancer.Domain.Distribution
 {
     /// <summary>
     /// Service to identify if query can be processed and define server to process query.

@@ -1,7 +1,7 @@
 using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using LoadBalancer.Models.Entities;
-using LoadBalancer.Domain.Services;
+using LoadBalancer.Domain.Distribution;
 using LoadBalancer.Models.Enums;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;

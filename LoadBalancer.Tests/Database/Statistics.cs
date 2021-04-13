@@ -7,6 +7,9 @@ using NUnit.Framework;
 
 namespace LoadBalancer.Tests.Database
 {
+    /// <summary>
+    /// Test statistics storage functionality.
+    /// </summary>
     public class Statistics
     {
         private readonly StatisticsRepository _repository =

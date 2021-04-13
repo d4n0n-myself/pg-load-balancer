@@ -3,6 +3,9 @@ using NUnit.Framework;
 
 namespace LoadBalancer.Tests
 {
+    /// <summary>
+    /// Validate statistics.
+    /// </summary>
     public partial class Validation
     {
         [Test]

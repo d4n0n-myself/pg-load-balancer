@@ -33,7 +33,12 @@ namespace LoadBalancer.Models.Entities
         public string Data { get; init; }
 
         public static Response Completed(string data = null, Guid? requestId = null) =>
-            new() {Result = QueryExecutionResult.QueryCompleted, Data = data, RequestId = requestId};
+            new()
+            {
+                Result = QueryExecutionResult.QueryCompleted, 
+                Data = data,
+                RequestId = requestId.HasValue && requestId.Value != Guid.Empty ? requestId : null
+            };
 
         public static Response Queued(Guid requestId) =>
             new() {Result = QueryExecutionResult.QueryQueued, RequestId = requestId};
@@ -43,7 +48,7 @@ namespace LoadBalancer.Models.Entities
             {
                 Result = QueryExecutionResult.QueryFailed,
                 Message = errorMessage,
-                RequestId = requestId
+                RequestId = requestId.HasValue && requestId.Value != Guid.Empty ? requestId : null
             };
 
         public bool Validate(out ValidationResult o)

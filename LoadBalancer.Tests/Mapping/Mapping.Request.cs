@@ -5,6 +5,9 @@ using NUnit.Framework;
 
 namespace LoadBalancer.Tests
 {
+    /// <summary>
+    /// Check request mappings.
+    /// </summary>
     public partial class Mapping
     {
         [Test]

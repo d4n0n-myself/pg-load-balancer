@@ -1,7 +1,8 @@
 using System.Threading.Tasks;
 using LoadBalancer.Database.Query;
 using LoadBalancer.Database.Statistics;
-using LoadBalancer.Domain.Services;
+using LoadBalancer.Domain.Decision;
+using LoadBalancer.Domain.Distribution;
 using LoadBalancer.Domain.Storage.Request;
 using LoadBalancer.Domain.Storage.Response;
 using LoadBalancer.Domain.Storage.Statistics;
@@ -38,14 +39,16 @@ namespace LoadBalancer.Web
 
             services.AddScoped<IStatisticsRepository, StatisticsRepository>();
             services.AddScoped<IQueryExecutor, QueryExecutor>();
+
+            services.AddScoped<IServerDecider, ServerDecider>();
             services.AddScoped<IQueryDistributionService, QueryDistributionService>();
             
             services.AddSingleton<IStatisticsStorage, StatisticsStorage>();
             services.AddSingleton<IRequestQueue, RequestQueue>();
             services.AddSingleton<IResponseStorage, ResponseStorage>();
 
-            services.AddTransient<RetrieveOlapStatisticsTask>(); // todo scoped ?
-            services.AddTransient<RetrieveOltpStatisticsTask>(); // todo scoped ?
+            services.AddTransient<RetrieveOlapStatisticsTask>();
+            services.AddTransient<RetrieveOltpStatisticsTask>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

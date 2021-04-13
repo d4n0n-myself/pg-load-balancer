@@ -1,5 +1,5 @@
 using System.Threading.Tasks;
-using LoadBalancer.Domain.Services;
+using LoadBalancer.Domain.Distribution;
 using LoadBalancer.Domain.Storage.Request;
 using LoadBalancer.Domain.Storage.Response;
 using LoadBalancer.Models.Enums;

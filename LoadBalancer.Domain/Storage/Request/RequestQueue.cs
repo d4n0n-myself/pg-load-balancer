@@ -20,7 +20,7 @@ namespace LoadBalancer.Domain.Storage.Request
                 return null;
             }
             
-            var minPriority = _values.Min(x => x.Value.Priority);
+            var minPriority = _values.Max(x => x.Value.Priority);
             var request = _values.OrderByDescending(x => x.Key)
                 .First(x => x.Value.Priority == minPriority);
             if (!_values.TryRemove(request))
@@ -28,6 +28,11 @@ namespace LoadBalancer.Domain.Storage.Request
                 throw new Exception("Can't remove data");
             }
             return request.Value;
+        }
+
+        public void Purge()
+        {
+            while (Get() is not null) { }
         }
     }
 }

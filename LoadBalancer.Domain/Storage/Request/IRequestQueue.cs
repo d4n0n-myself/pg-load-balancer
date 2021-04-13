@@ -4,5 +4,6 @@ namespace LoadBalancer.Domain.Storage.Request
     {
         void Add(Models.Entities.Request request);
         Models.Entities.Request Get();
+        void Purge();
     }
 }

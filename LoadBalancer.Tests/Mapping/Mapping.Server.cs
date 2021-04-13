@@ -3,6 +3,9 @@ using NUnit.Framework;
 
 namespace LoadBalancer.Tests
 {
+    /// <summary>
+    /// Check server metadata mappings.
+    /// </summary>
     public partial class Mapping
     {
         [Test]

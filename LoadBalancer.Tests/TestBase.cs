@@ -6,7 +6,8 @@ using System.Linq;
 using Dapper;
 using LoadBalancer.Database.Query;
 using LoadBalancer.Database.Statistics;
-using LoadBalancer.Domain.Services;
+using LoadBalancer.Domain.Decision;
+using LoadBalancer.Domain.Distribution;
 using LoadBalancer.Domain.Storage.Request;
 using LoadBalancer.Domain.Storage.Response;
 using LoadBalancer.Domain.Storage.Statistics;
@@ -20,11 +21,17 @@ using Npgsql;
 
 namespace LoadBalancer.Tests
 {
+    /// <summary>
+    /// Base test class. Compiles the service provider for tests.
+    /// </summary>
     public class TestBase
     {
         private readonly string _configFilePath =
             Directory.GetCurrentDirectory() + "../../../../appsettings.json";
 
+        /// <summary>
+        /// DI container.
+        /// </summary>
         protected IServiceProvider ServiceProvider { get; }
 
         protected TestBase()
@@ -43,6 +50,7 @@ namespace LoadBalancer.Tests
             services.AddScoped<IResponseStorage, ResponseStorage>();
             services.AddScoped<IStatisticsStorage, StatisticsStorage>();
 
+            services.AddScoped<IServerDecider, ServerDecider>();
             services.AddScoped<IQueryDistributionService, QueryDistributionService>();
 
             ServiceProvider = services.BuildServiceProvider();
@@ -50,18 +58,24 @@ namespace LoadBalancer.Tests
             ApplicationContext.Container = ServiceProvider;
         }
 
+        /// <summary>
+        /// Add statistics (Online=true,SessionsCount) to chosen storage.
+        /// </summary>
         protected static void SetLocalhostStatisticsAsOnline(IStatisticsStorage storage, int sessionsCount = 1)
         {
             storage.Set(QueryType.Oltp, new Server(), new Statistics {IsOnline = true, CurrentSessionsCount = sessionsCount});
         }
 
-        protected void SimulateDbLoad(Action action)
+        /// <summary>
+        /// Simulate load on database server by opening <param name="connectionCount"></param> connections.
+        /// </summary>
+        protected void SimulateDbLoad(Action action, int connectionCount = 3)
         {
             IEnumerable<NpgsqlConnection> connections = ImmutableArray<NpgsqlConnection>.Empty;
             try
             {
                 var configuration = ServiceProvider.Resolve<BalancerConfiguration>();
-                connections = Enumerable.Range(0, 3).Select(_ =>
+                connections = Enumerable.Range(0, connectionCount).Select(_ =>
                 {
                     var connection = new NpgsqlConnection(configuration.OltpPool.Single().AsConnectionString());
                     connection.Open();

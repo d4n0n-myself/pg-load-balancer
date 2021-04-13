@@ -1,7 +1,7 @@
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 using LoadBalancer.Database.Query;
+using LoadBalancer.Domain.Decision;
 using LoadBalancer.Domain.Storage.Request;
 using LoadBalancer.Domain.Storage.Response;
 using LoadBalancer.Domain.Storage.Statistics;
@@ -10,7 +10,7 @@ using LoadBalancer.Models.System;
 using Microsoft.Extensions.Options;
 using Npgsql;
 
-namespace LoadBalancer.Domain.Services
+namespace LoadBalancer.Domain.Distribution
 {
     public class QueryDistributionService : IQueryDistributionService
     {
@@ -19,15 +19,17 @@ namespace LoadBalancer.Domain.Services
         private readonly BalancerConfiguration _configuration;
         private readonly IResponseStorage _responseStorage;
         private readonly IRequestQueue _queue;
+        private readonly IServerDecider _serverDecider;
 
-        public QueryDistributionService(IStatisticsStorage statisticsStorage, IQueryExecutor queryExecutor,
-            IOptions<BalancerConfiguration> options, IResponseStorage responseStorage, IRequestQueue queue)
+        public QueryDistributionService(IStatisticsStorage statisticsStorage, IResponseStorage responseStorage, 
+            IOptions<BalancerConfiguration> options, IQueryExecutor queryExecutor, IRequestQueue queue, IServerDecider decider)
         {
             _statisticsStorage = statisticsStorage;
             _queryExecutor = queryExecutor;
             _responseStorage = responseStorage;
             _queue = queue;
             _configuration = options.Value;
+            _serverDecider = decider;
         }
 
         public async Task<Response> DistributeQueryAsync(Request request)
@@ -39,8 +41,7 @@ namespace LoadBalancer.Domain.Services
             
             var servers = _statisticsStorage.Get(request.Type);
             var maxSessions = _configuration.GetMaxSessionsParameter(request.Type);
-            var (availableServer, _) = servers
-                .FirstOrDefault(x => x.Value.IsOnline && x.Value.CurrentSessionsCount < maxSessions);
+            var availableServer = _serverDecider.FindAvailableServer(servers, maxSessions);
 
             if (availableServer == null)
             {
@@ -65,7 +66,7 @@ namespace LoadBalancer.Domain.Services
                     _responseStorage.Add(Response.Completed(serializedData, request.RequestId));
                 }
 
-                return Response.Completed(serializedData);
+                return Response.Completed(serializedData, request.RequestId);
             }
             catch (PostgresException postgresException)
             {
@@ -73,7 +74,7 @@ namespace LoadBalancer.Domain.Services
                 // postgres errors are client-side problems
                 if (!request.AcceptRetries)
                     return Response.Fail(message);
-                
+
                 request.RequestId = Guid.NewGuid();
                 _responseStorage.Add(Response.Fail(message, request.RequestId));
                 return Response.Queued(request.RequestId);
@@ -93,21 +94,10 @@ namespace LoadBalancer.Domain.Services
                     return Response.Fail();
                 }
 
+                request.IsRetried = true;
                 request.RequestId = Guid.NewGuid();
                 _queue.Add(request);
                 return Response.Completed(request.RequestId.ToString());
-
-                // todo
-                // var maxRetryCount = _configuration.MaxRetryCount;
-                // if (request.CurrentRetryAttempt < maxRetryCount)
-                // {
-                //     // enqueue for retry
-                //     return Response.Queued(request.RequestId);
-                // }
-                //
-                // var response = Response.Fail("Request has failed all its attempts", request.RequestId);
-                // _responseStorage.Add(response);
-                // return response;
             }
         }
 
@@ -124,9 +114,10 @@ namespace LoadBalancer.Domain.Services
                 return Response.Fail();
             }
 
+            request.IsRetried = true;
             request.RequestId = Guid.NewGuid();
             _queue.Add(request);
-            return Response.Completed(request.RequestId.ToString());
+            return Response.Queued(request.RequestId);
         }
     }
 }

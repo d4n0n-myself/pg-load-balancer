@@ -14,6 +14,9 @@ using RequestM = LoadBalancer.Models.Entities.Request;
 
 namespace LoadBalancer.Tests.Database
 {
+    /// <summary>
+    /// Test basic functions (add/pop/get) from queues and storages.
+    /// </summary>
     public class Storage : TestBase
     {
         [Test]

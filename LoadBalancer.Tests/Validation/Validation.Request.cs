@@ -5,6 +5,9 @@ using NUnit.Framework;
 
 namespace LoadBalancer.Tests
 {
+    /// <summary>
+    /// Validate requests.
+    /// </summary>
     public partial class Validation
     {
         [Test]
