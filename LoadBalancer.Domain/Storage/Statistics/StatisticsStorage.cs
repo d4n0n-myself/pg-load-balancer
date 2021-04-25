@@ -10,11 +10,15 @@ using Microsoft.Extensions.Options;
 
 namespace LoadBalancer.Domain.Storage.Statistics
 {
+    /// <inheritdoc />
     public class StatisticsStorage : IStatisticsStorage
     {
-        private readonly ConcurrentDictionary<Server, Models.Entities.Statistics> _olapStatisticsMap;
-        private readonly ConcurrentDictionary<Server, Models.Entities.Statistics> _oltpStatisticsMap;
+        private ConcurrentDictionary<Server, Models.Entities.Statistics> _olapStatisticsMap;
+        private ConcurrentDictionary<Server, Models.Entities.Statistics> _oltpStatisticsMap;
 
+        /// <summary>
+        /// ctor.
+        /// </summary>
         public StatisticsStorage(IOptions<BalancerConfiguration> options)
         {
             var configuration = options.Value;
@@ -27,6 +31,7 @@ namespace LoadBalancer.Domain.Storage.Statistics
             );
         }
 
+        /// <inheritdoc />
         public IDictionary<Server, Models.Entities.Statistics> Get(QueryType type)
         {
             return type switch
@@ -37,6 +42,7 @@ namespace LoadBalancer.Domain.Storage.Statistics
             };
         }
 
+        /// <inheritdoc />
         public IEnumerable<(Server, Models.Entities.Statistics)> GetAll()
         {
             return _olapStatisticsMap
@@ -48,11 +54,30 @@ namespace LoadBalancer.Domain.Storage.Statistics
                 });
         }
 
+        /// <inheritdoc />
         public void Set(QueryType type, Server server, Models.Entities.Statistics statistics)
         {
             _ = type == QueryType.Oltp
                 ? _oltpStatisticsMap.AddOrUpdate(server, statistics, (_, _) => statistics)
                 : _olapStatisticsMap.AddOrUpdate(server, statistics, (_, _) => statistics);
+        }
+
+        /// <inheritdoc />
+        public void ReloadFromConfiguration()
+        {
+            var options =
+                (IOptions<BalancerConfiguration>) ApplicationContext.Container.GetService(
+                    typeof(IOptions<BalancerConfiguration>));
+            if (options == null)
+                throw new ApplicationException("No options to reload configuration in statistics storage!");
+            var configuration = options.Value;
+
+            _olapStatisticsMap = new ConcurrentDictionary<Server, Models.Entities.Statistics>(
+                configuration.OlapPool.MapConfigurationSection()
+            );
+            _oltpStatisticsMap = new ConcurrentDictionary<Server, Models.Entities.Statistics>(
+                configuration.OltpPool.MapConfigurationSection()
+            );
         }
     }
 }

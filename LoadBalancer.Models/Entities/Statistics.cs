@@ -24,6 +24,7 @@ namespace LoadBalancer.Models.Entities
         /// </summary>
         public static Statistics Empty => new();
 
+        /// <inheritdoc />
         public bool Validate(out ValidationResult o)
         {
             if (CurrentSessionsCount < 0)
@@ -36,6 +37,7 @@ namespace LoadBalancer.Models.Entities
             return true;
         }
 
+        /// <inheritdoc />
         public bool Equals(Statistics other)
         {
             if (ReferenceEquals(null, other)) return false;
@@ -43,6 +45,7 @@ namespace LoadBalancer.Models.Entities
             return IsOnline == other.IsOnline && CurrentSessionsCount == other.CurrentSessionsCount;
         }
 
+        /// <inheritdoc />
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
@@ -50,16 +53,23 @@ namespace LoadBalancer.Models.Entities
             return obj.GetType() == GetType() && Equals((Statistics) obj);
         }
 
+        /// <inheritdoc />
         public override int GetHashCode()
         {
             return HashCode.Combine(IsOnline, CurrentSessionsCount);
         }
 
+        /// <summary>
+        /// Equality operator.
+        /// </summary>
         public static bool operator ==(Statistics left, Statistics right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        /// Non-Equality operator.
+        /// </summary>
         public static bool operator !=(Statistics left, Statistics right)
         {
             return !Equals(left, right);

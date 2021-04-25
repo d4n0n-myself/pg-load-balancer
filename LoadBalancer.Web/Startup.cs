@@ -17,8 +17,14 @@ using Microsoft.OpenApi.Models;
 
 namespace LoadBalancer.Web
 {
+    /// <summary>
+    /// Default web startup class.
+    /// </summary>
     public partial class Startup
     {
+        /// <summary>
+        /// ctor.
+        /// </summary>
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -26,7 +32,12 @@ namespace LoadBalancer.Web
 
         private IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
+        /// <summary>
+        /// Configure services.
+        /// </summary>
+        /// <remarks>
+        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// </remarks>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
@@ -50,8 +61,13 @@ namespace LoadBalancer.Web
             services.AddTransient<RetrieveOlapStatisticsTask>();
             services.AddTransient<RetrieveOltpStatisticsTask>();
         }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        
+        /// <summary>
+        /// Configure.
+        /// </summary>
+        /// <remarks>
+        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </remarks>
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             var container = app.ApplicationServices;

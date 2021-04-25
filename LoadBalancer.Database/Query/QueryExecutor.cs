@@ -7,8 +7,10 @@ using static System.Text.Json.JsonSerializer;
 
 namespace LoadBalancer.Database.Query
 {
+    /// <inheritdoc cref="LoadBalancer.Database.Query.IQueryExecutor" />
     public class QueryExecutor : IQueryExecutor, IDisposable
     {
+        /// <inheritdoc />
         public async Task ExecuteAsync(Server server, string query)
         {
             await Run(server, query, async connection =>
@@ -18,6 +20,7 @@ namespace LoadBalancer.Database.Query
             });
         }
 
+        /// <inheritdoc />
         public async Task<string> QueryAsync(Server server, string query)
         {
             return await Run(server, query, async connection =>
@@ -55,6 +58,7 @@ namespace LoadBalancer.Database.Query
             }
         }
 
+        /// <inheritdoc />
         public void Dispose()
         {
             // do nothing

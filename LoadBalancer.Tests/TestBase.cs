@@ -34,6 +34,9 @@ namespace LoadBalancer.Tests
         /// </summary>
         protected IServiceProvider ServiceProvider { get; }
 
+        /// <summary>
+        /// ctor.
+        /// </summary>
         protected TestBase()
         {
             var services = new ServiceCollection();
@@ -67,8 +70,10 @@ namespace LoadBalancer.Tests
         }
 
         /// <summary>
-        /// Simulate load on database server by opening <param name="connectionCount"></param> connections.
+        /// Simulate load on database server by opening <paramref name="connectionCount"></paramref> connections.
         /// </summary>
+        /// <param name="action"></param>
+        /// <param name="connectionCount"></param>
         protected void SimulateDbLoad(Action action, int connectionCount = 3)
         {
             IEnumerable<NpgsqlConnection> connections = ImmutableArray<NpgsqlConnection>.Empty;

@@ -12,6 +12,7 @@ using Npgsql;
 
 namespace LoadBalancer.Domain.Distribution
 {
+    /// <inheritdoc />
     public class QueryDistributionService : IQueryDistributionService
     {
         private readonly IStatisticsStorage _statisticsStorage;
@@ -21,6 +22,9 @@ namespace LoadBalancer.Domain.Distribution
         private readonly IRequestQueue _queue;
         private readonly IServerDecider _serverDecider;
 
+        /// <summary>
+        /// ctor.
+        /// </summary>
         public QueryDistributionService(IStatisticsStorage statisticsStorage, IResponseStorage responseStorage, 
             IOptions<BalancerConfiguration> options, IQueryExecutor queryExecutor, IRequestQueue queue, IServerDecider decider)
         {
@@ -32,6 +36,7 @@ namespace LoadBalancer.Domain.Distribution
             _serverDecider = decider;
         }
 
+        /// <inheritdoc />
         public async Task<Response> DistributeQueryAsync(Request request)
         {
             if (!request.Validate(out var validationResult))
@@ -43,7 +48,7 @@ namespace LoadBalancer.Domain.Distribution
             var maxSessions = _configuration.GetMaxSessionsParameter(request.Type);
             var availableServer = _serverDecider.FindAvailableServer(servers, maxSessions);
 
-            if (availableServer == null)
+            if (availableServer is null)
             {
                 return HandleNoAvailableServerScenario(request);
             }

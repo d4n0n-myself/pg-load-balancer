@@ -20,6 +20,9 @@ namespace LoadBalancer.Domain.Tasks
         private readonly IStatisticsStorage _storage;
         private readonly ILogger<RetrieveOltpStatisticsTask> _logger;
 
+        /// <summary>
+        /// ctor.
+        /// </summary>
         public RetrieveOltpStatisticsTask(IOptions<BalancerConfiguration> configuration,
             IStatisticsRepository repository, IStatisticsStorage storage, ILogger<RetrieveOltpStatisticsTask> logger)
         {
@@ -29,6 +32,7 @@ namespace LoadBalancer.Domain.Tasks
             _configuration = configuration.Value;
         }
 
+        /// <inheritdoc />
         public async Task Execute(IJobExecutionContext context)
         {
             _logger.LogInformation($"Get stats for Oltp {DateTime.Now}");

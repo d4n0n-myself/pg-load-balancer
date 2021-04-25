@@ -9,6 +9,9 @@ namespace LoadBalancer.Tests
     /// </summary>
     public partial class Validation
     {
+        /// <summary>
+        /// Validate <see cref="Response"/> object.
+        /// </summary>
         [Test]
         public void ValidateResponse()
         {

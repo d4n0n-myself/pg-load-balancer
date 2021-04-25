@@ -5,8 +5,14 @@ using NLog.Extensions.Logging;
 
 namespace LoadBalancer.Web
 {
+    /// <summary>
+    /// Main class.
+    /// </summary>
     public static class Program
     {
+        /// <summary>
+        /// Main.
+        /// </summary>
         public static void Main(string[] args)
         {
             CreateHostBuilder(args).Build().Run();

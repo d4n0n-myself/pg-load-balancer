@@ -4,15 +4,18 @@ using System.Linq;
 
 namespace LoadBalancer.Domain.Storage.Request
 {
+    /// <inheritdoc />
     public class RequestQueue : IRequestQueue
     {
         private readonly ConcurrentDictionary<(Guid, DateTime), Models.Entities.Request> _values = new();
-        
+
+        /// <inheritdoc />
         public void Add(Models.Entities.Request request)
         {
             _values.AddOrUpdate((request.RequestId, DateTime.Now), request, (_, _) => request);
         }
 
+        /// <inheritdoc />
         public Models.Entities.Request Get()
         {
             if (_values.IsEmpty)
@@ -30,6 +33,7 @@ namespace LoadBalancer.Domain.Storage.Request
             return request.Value;
         }
 
+        /// <inheritdoc />
         public void Purge()
         {
             while (Get() is not null) { }

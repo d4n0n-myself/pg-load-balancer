@@ -8,6 +8,9 @@ namespace LoadBalancer.Tests
     /// </summary>
     public partial class Mapping
     {
+        /// <summary>
+        /// Map <see cref="Server"/> from file.
+        /// </summary>
         [Test]
         public void MapServer()
         {

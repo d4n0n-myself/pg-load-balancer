@@ -5,7 +5,14 @@ namespace LoadBalancer.Models.Enums
     /// </summary>
     public enum QueryType
     {
+        /// <summary>
+        /// Query is OLAP type.
+        /// </summary>
         Olap = 1,
+
+        /// <summary>
+        /// Query is OLTP type.
+        /// </summary>
         Oltp = 2
     }
 }

@@ -62,6 +62,8 @@ namespace LoadBalancer.Tests.Domain
             var availableServer = decider.FindAvailableServer(oltpServers, maxSessions);
             
             Assert.AreNotEqual(availableServer, someOccupiedHost);
+
+            statisticsStorage.ReloadFromConfiguration();
         }
     }
 }

@@ -32,6 +32,9 @@ namespace LoadBalancer.Models.Entities
         /// </summary>
         public string Data { get; init; }
 
+        /// <summary>
+        /// Return default response for completed situation.
+        /// </summary>
         public static Response Completed(string data = null, Guid? requestId = null) =>
             new()
             {
@@ -40,9 +43,15 @@ namespace LoadBalancer.Models.Entities
                 RequestId = requestId.HasValue && requestId.Value != Guid.Empty ? requestId : null
             };
 
+        /// <summary>
+        /// Return default response for queued situation.
+        /// </summary>
         public static Response Queued(Guid requestId) =>
             new() {Result = QueryExecutionResult.QueryQueued, RequestId = requestId};
 
+        /// <summary>
+        /// Return default response for fail situation.
+        /// </summary>
         public static Response Fail(string errorMessage = null, Guid? requestId = null) =>
             new()
             {
@@ -51,6 +60,7 @@ namespace LoadBalancer.Models.Entities
                 RequestId = requestId.HasValue && requestId.Value != Guid.Empty ? requestId : null
             };
 
+        /// <inheritdoc />
         public bool Validate(out ValidationResult o)
         {
             // ReSharper disable once ConvertIfStatementToSwitchStatement
@@ -70,6 +80,7 @@ namespace LoadBalancer.Models.Entities
             return true;
         }
 
+        /// <inheritdoc />
         public bool Equals(Response other)
         {
             if (ReferenceEquals(null, other)) return false;
@@ -78,6 +89,7 @@ namespace LoadBalancer.Models.Entities
                    Data == other.Data;
         }
 
+        /// <inheritdoc />
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
@@ -85,16 +97,23 @@ namespace LoadBalancer.Models.Entities
             return obj.GetType() == GetType() && Equals((Response) obj);
         }
 
+        /// <inheritdoc />
         public override int GetHashCode()
         {
             return HashCode.Combine(RequestId, (int) Result, Message, Data);
         }
-
+        
+        /// <summary>
+        /// Equality operator.
+        /// </summary>
         public static bool operator ==(Response left, Response right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        /// Non-Equality operator.
+        /// </summary>
         public static bool operator !=(Response left, Response right)
         {
             return !Equals(left, right);

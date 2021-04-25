@@ -84,6 +84,7 @@ namespace LoadBalancer.Models.Entities
             return $"Host={Host};Port={Port};Database={Database};Username={Username};Password={Password}";
         }
 
+        /// <inheritdoc />
         public bool Validate(out ValidationResult o)
         {
             if (new[] {_database, _host, _port, _username, _password}.Any(string.IsNullOrWhiteSpace))
@@ -114,6 +115,7 @@ namespace LoadBalancer.Models.Entities
             return true;
         }
 
+        /// <inheritdoc />
         public bool Equals(Server other)
         {
             if (ReferenceEquals(null, other)) return false;
@@ -122,6 +124,7 @@ namespace LoadBalancer.Models.Entities
                    _username == other._username && _password == other._password && _name == other._name;
         }
 
+        /// <inheritdoc />
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
@@ -129,16 +132,23 @@ namespace LoadBalancer.Models.Entities
             return obj.GetType() == GetType() && Equals((Server) obj);
         }
 
+        /// <inheritdoc />
         public override int GetHashCode()
         {
             return HashCode.Combine(_host, _port, _database, _username, _password, _name);
         }
-
+        
+        /// <summary>
+        /// Equality operator.
+        /// </summary>
         public static bool operator ==(Server left, Server right)
         {
             return Equals(left, right);
         }
 
+        /// <summary>
+        /// Non-Equality operator.
+        /// </summary>
         public static bool operator !=(Server left, Server right)
         {
             return !Equals(left, right);

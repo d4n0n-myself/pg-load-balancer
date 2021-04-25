@@ -17,6 +17,7 @@ namespace LoadBalancer.Web.Controllers
     {
         private readonly IQueryDistributionService _service;
 
+        /// <inheritdoc />
         public RequestController(IQueryDistributionService service)
         {
             _service = service;

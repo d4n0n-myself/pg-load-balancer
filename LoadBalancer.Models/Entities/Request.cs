@@ -57,6 +57,7 @@ namespace LoadBalancer.Models.Entities
         /// </summary>
         public int CurrentRetryAttempt { get; set; }
 
+        /// <inheritdoc />
         public bool Validate(out ValidationResult o)
         {
             if (CurrentRetryAttempt < 0)
@@ -87,6 +88,7 @@ namespace LoadBalancer.Models.Entities
             return true;
         }
 
+        /// <inheritdoc />
         public bool Equals(Request other)
         {
             if (ReferenceEquals(null, other)) return false;
@@ -97,6 +99,7 @@ namespace LoadBalancer.Models.Entities
                    CurrentRetryAttempt == other.CurrentRetryAttempt;
         }
 
+        /// <inheritdoc />
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
@@ -104,17 +107,24 @@ namespace LoadBalancer.Models.Entities
             return obj.GetType() == GetType() && Equals((Request) obj);
         }
 
+        /// <inheritdoc />
         public override int GetHashCode()
         {
             return HashCode.Combine((int) Type, IsSelect, Query, AcceptRetries, Priority, RequestId, IsRetried,
                 CurrentRetryAttempt);
         }
 
+        /// <summary>
+        /// Equality operator.
+        /// </summary>
         public static bool operator ==(Request left, Request right)
         {
             return Equals(left, right);
         }
-
+        
+        /// <summary>
+        /// Non-Equality operator.
+        /// </summary>
         public static bool operator !=(Request left, Request right)
         {
             return !Equals(left, right);

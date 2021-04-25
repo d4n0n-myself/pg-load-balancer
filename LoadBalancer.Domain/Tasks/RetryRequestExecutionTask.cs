@@ -7,12 +7,19 @@ using Quartz;
 
 namespace LoadBalancer.Domain.Tasks
 {
+    /// <summary>
+    /// Get request from queue and start its balancing and execution process.
+    /// </summary>
+    // ReSharper disable once ClassNeverInstantiated.Global
     public class RetryRequestExecutionTask : IJob
     {
         private readonly IQueryDistributionService _service;
         private readonly IRequestQueue _queue;
         private readonly IResponseStorage _storage;
 
+        /// <summary>
+        /// ctor.
+        /// </summary>
         public RetryRequestExecutionTask(IQueryDistributionService service, IRequestQueue queue,
             IResponseStorage storage)
         {
@@ -21,10 +28,11 @@ namespace LoadBalancer.Domain.Tasks
             _storage = storage;
         }
 
+        /// <inheritdoc />
         public async Task Execute(IJobExecutionContext context)
         {
             var request = _queue.Get();
-            if (request == null)
+            if (request is null)
                 return;
 
             var response = await _service.DistributeQueryAsync(request);

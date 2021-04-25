@@ -14,14 +14,17 @@ namespace LoadBalancer.Web.Controllers
     {
         private readonly IResponseStorage _storage;
 
+        /// <inheritdoc />
         public ResponseController(IResponseStorage storage)
         {
             _storage = storage;
         }
         
         /// <summary>
-        /// Get response for request with <see cref="requestId"/>.
+        /// Get response for request with <paramref name="requestId"></paramref>.
         /// </summary>
+        /// <param name="requestId"></param>
+        /// <returns></returns>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]

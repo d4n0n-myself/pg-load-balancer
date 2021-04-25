@@ -7,15 +7,20 @@ using Npgsql;
 
 namespace LoadBalancer.Database.Statistics
 {
+    /// <inheritdoc cref="LoadBalancer.Database.Statistics.IStatisticsRepository" />
     public class StatisticsRepository : IStatisticsRepository, IDisposable
     {
         private readonly ILogger<StatisticsRepository> _logger;
 
+        /// <summary>
+        /// ctor.
+        /// </summary>
         public StatisticsRepository(ILogger<StatisticsRepository> logger)
         {
             _logger = logger;
         }
 
+        /// <inheritdoc />
         public async Task<Models.Entities.Statistics> GetStatistics(Server server)
         {
             await using var npgsqlConnection = new NpgsqlConnection(server.AsConnectionString());
@@ -40,7 +45,8 @@ namespace LoadBalancer.Database.Statistics
                 return failedStatistics;
             }
         }
-        
+
+        /// <inheritdoc />
         public void Dispose()
         {
             // do nothing

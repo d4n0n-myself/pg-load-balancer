@@ -10,6 +10,9 @@ namespace LoadBalancer.Tests
     /// </summary>
     public partial class Mapping
     {
+        /// <summary>
+        /// Map <see cref="Request"/> from file.
+        /// </summary>
         [Test]
         public void MapRequest()
         {

@@ -13,6 +13,7 @@ namespace LoadBalancer.Web.Controllers
     {
         private readonly IStatisticsStorage _storage;
 
+        /// <inheritdoc />
         public StatisticsController(IStatisticsStorage storage)
         {
             _storage = storage;

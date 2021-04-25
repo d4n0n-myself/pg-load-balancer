@@ -19,6 +19,9 @@ namespace LoadBalancer.Tests.Database
     /// </summary>
     public class Storage : TestBase
     {
+        /// <summary>
+        /// Test <see cref="RequestM"/> queue.
+        /// </summary>
         [Test]
         public void Request()
         {
@@ -41,6 +44,9 @@ namespace LoadBalancer.Tests.Database
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// Test <see cref="ResponseM"/> storage.
+        /// </summary>
         [Test]
         public void Response()
         {
@@ -58,6 +64,9 @@ namespace LoadBalancer.Tests.Database
             Assert.AreEqual(expected, actual);
         }
 
+        /// <summary>
+        /// Test <see cref="StatisticsM"/> storage.
+        /// </summary>
         [Test]
         public void Statistics()
         {

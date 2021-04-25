@@ -15,7 +15,7 @@ namespace LoadBalancer.Web
         private async Task RegisterTasks(IServiceProvider container)
         {
             var balancerConfiguration = container.GetService<IOptions<BalancerConfiguration>>()?.Value;
-            if (balancerConfiguration == null)
+            if (balancerConfiguration is null)
             {
                 throw new ArgumentNullException(nameof(balancerConfiguration), "Balancing options required to start!");
             }
