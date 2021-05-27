@@ -14,10 +14,7 @@ namespace LoadBalancer.Web.Controllers
         private readonly IStatisticsStorage _storage;
 
         /// <inheritdoc />
-        public StatisticsController(IStatisticsStorage storage)
-        {
-            _storage = storage;
-        }
+        public StatisticsController(IStatisticsStorage storage) => _storage = storage;
 
         /// <summary>
         /// Get statistics for all servers. No format, pretty-print.

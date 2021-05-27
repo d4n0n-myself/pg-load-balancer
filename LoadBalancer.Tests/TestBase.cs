@@ -35,7 +35,7 @@ namespace LoadBalancer.Tests
         protected IServiceProvider ServiceProvider { get; }
 
         /// <summary>
-        /// ctor.
+        /// Constructor.
         /// </summary>
         protected TestBase()
         {

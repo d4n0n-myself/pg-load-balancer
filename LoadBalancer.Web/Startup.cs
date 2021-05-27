@@ -23,7 +23,7 @@ namespace LoadBalancer.Web
     public partial class Startup
     {
         /// <summary>
-        /// ctor.
+        /// Constructor.
         /// </summary>
         public Startup(IConfiguration configuration)
         {

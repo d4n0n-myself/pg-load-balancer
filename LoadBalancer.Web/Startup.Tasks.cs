@@ -32,12 +32,13 @@ namespace LoadBalancer.Web
 
             var olapRefreshInterval = balancerConfiguration.RefreshOlapStatisticsIntervalInSec;
             var oltpRefreshInterval = balancerConfiguration.RefreshOltpStatisticsIntervalInSec;
+            var retryQueryInterval = balancerConfiguration.RetryQueryIntervalInSec;
 
             await scheduler.RegisterJobAsync<RetrieveOlapStatisticsTask>(olapRefreshInterval, "olapStats",
                 "Request statistics from PostgreSQL server");
             await scheduler.RegisterJobAsync<RetrieveOltpStatisticsTask>(oltpRefreshInterval, "oltpStats",
                 "Request statistics from PostgreSQL server");
-            await scheduler.RegisterJobAsync<RetryRequestExecutionTask>(oltpRefreshInterval, "retryRequest",
+            await scheduler.RegisterJobAsync<RetryRequestExecutionTask>(retryQueryInterval, "retryRequest",
                 "Query retry execution runner");
         }
     }

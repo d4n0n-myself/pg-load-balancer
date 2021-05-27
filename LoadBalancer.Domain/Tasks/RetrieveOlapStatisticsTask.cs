@@ -1,4 +1,3 @@
-using System;
 using System.Threading.Tasks;
 using LoadBalancer.Database.Statistics;
 using LoadBalancer.Domain.Storage.Statistics;
@@ -21,7 +20,7 @@ namespace LoadBalancer.Domain.Tasks
         private readonly ILogger<RetrieveOlapStatisticsTask> _logger;
 
         /// <summary>
-        /// ctor.
+        /// Constructor.
         /// </summary>
         public RetrieveOlapStatisticsTask(IOptions<BalancerConfiguration> configuration,
             IStatisticsRepository repository, IStatisticsStorage storage, ILogger<RetrieveOlapStatisticsTask> logger)
@@ -35,7 +34,7 @@ namespace LoadBalancer.Domain.Tasks
         /// <inheritdoc />
         public async Task Execute(IJobExecutionContext context)
         {
-            _logger.LogInformation($"Get stats for Olap {DateTime.Now}");
+            _logger.LogInformation($"Get stats for Olap");
             var servers = _configuration.OlapPool;
 
             foreach (var server in servers)

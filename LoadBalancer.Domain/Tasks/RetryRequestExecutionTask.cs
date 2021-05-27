@@ -18,7 +18,7 @@ namespace LoadBalancer.Domain.Tasks
         private readonly IResponseStorage _storage;
 
         /// <summary>
-        /// ctor.
+        /// Constructor.
         /// </summary>
         public RetryRequestExecutionTask(IQueryDistributionService service, IRequestQueue queue,
             IResponseStorage storage)

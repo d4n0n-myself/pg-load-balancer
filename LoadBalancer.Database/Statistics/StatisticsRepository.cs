@@ -13,7 +13,7 @@ namespace LoadBalancer.Database.Statistics
         private readonly ILogger<StatisticsRepository> _logger;
 
         /// <summary>
-        /// ctor.
+        /// Constructor.
         /// </summary>
         public StatisticsRepository(ILogger<StatisticsRepository> logger)
         {

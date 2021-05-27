@@ -47,6 +47,11 @@ namespace LoadBalancer.Models.System
         public Server[] OltpPool { get; init; }
 
         /// <summary>
+        /// Query restart interval. 
+        /// </summary>
+        public int RetryQueryIntervalInSec { get; set; }
+
+        /// <summary>
         /// Get max sessions. Convenient in case of extensiosn 
         /// </summary>
         public long GetMaxSessionsParameter(QueryType type)

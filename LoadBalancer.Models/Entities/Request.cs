@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel.DataAnnotations;
 using LoadBalancer.Models.Enums;
 using LoadBalancer.Models.Interfaces;
-
+// ReSharper disable PropertyCanBeMadeInitOnly.Global
 // ReSharper disable UnusedAutoPropertyAccessor.Global
 // ReSharper disable NonReadonlyMemberInGetHashCode
 
@@ -43,7 +43,7 @@ namespace LoadBalancer.Models.Entities
         public int Priority { get; set; }
 
         /// <summary>
-        /// Identifier. Is being given to client to get response if request if accepting retries. 
+        /// Identifier. Is being given to client to get response if request is accepting retries. 
         /// </summary>
         public Guid RequestId { get; set; }
 

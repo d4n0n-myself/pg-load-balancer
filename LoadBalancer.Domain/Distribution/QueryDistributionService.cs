@@ -23,7 +23,7 @@ namespace LoadBalancer.Domain.Distribution
         private readonly IServerDecider _serverDecider;
 
         /// <summary>
-        /// ctor.
+        /// Constructor.
         /// </summary>
         public QueryDistributionService(IStatisticsStorage statisticsStorage, IResponseStorage responseStorage, 
             IOptions<BalancerConfiguration> options, IQueryExecutor queryExecutor, IRequestQueue queue, IServerDecider decider)

@@ -8,24 +8,21 @@ namespace LoadBalancer.Web.Controllers
     /// <summary>
     /// Query response accessor.
     /// </summary>
-    [Route("{controller}/{action}")]
     [UnhandledExceptionCoverage]
     public class ResponseController : Controller
     {
         private readonly IResponseStorage _storage;
 
         /// <inheritdoc />
-        public ResponseController(IResponseStorage storage)
-        {
-            _storage = storage;
-        }
-        
+        public ResponseController(IResponseStorage storage) => _storage = storage;
+
         /// <summary>
         /// Get response for request with <paramref name="requestId"></paramref>.
         /// </summary>
         /// <param name="requestId"></param>
         /// <returns></returns>
         [HttpGet]
+        [Route("response")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]

@@ -17,7 +17,7 @@ namespace LoadBalancer.Domain.Storage.Statistics
         private ConcurrentDictionary<Server, Models.Entities.Statistics> _oltpStatisticsMap;
 
         /// <summary>
-        /// ctor.
+        /// Constructor.
         /// </summary>
         public StatisticsStorage(IOptions<BalancerConfiguration> options)
         {
