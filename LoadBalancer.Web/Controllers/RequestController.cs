@@ -2,6 +2,7 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations;
 using LoadBalancer.Models.Entities;
 using LoadBalancer.Domain.Distribution;
+using LoadBalancer.Domain.Storage.Request;
 using LoadBalancer.Models.Enums;
 using LoadBalancer.Web.Dto;
 using Microsoft.AspNetCore.Http;
@@ -12,19 +13,24 @@ namespace LoadBalancer.Web.Controllers
     /// <summary>
     /// Balancing pipeline accessor.
     /// </summary>
-    [Route("")]
     [UnhandledExceptionCoverage]
     public class RequestController : Controller
     {
         private readonly IQueryDistributionService _service;
+        private readonly IRequestQueue _queue;
 
         /// <inheritdoc />
-        public RequestController(IQueryDistributionService service) => _service = service;
+        public RequestController(IQueryDistributionService service, IRequestQueue queue)
+        {
+            _service = service;
+            _queue = queue;
+        }
 
         /// <summary>
         /// Balance SQL query. 
         /// </summary>
         [HttpGet]
+        [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -34,8 +40,23 @@ namespace LoadBalancer.Web.Controllers
             return result.Result switch
             {
                 QueryExecutionResult.QueryFailed => Problem(result.Message, statusCode: 400),
-                _ => Ok(result.Data),
+                QueryExecutionResult.QueryQueued => Ok(new {result.Result, result.RequestId}),
+                _ => Ok(new {result.Result, result.Data})
             };
+        }
+
+        /// <summary>
+        /// Purge request queue.
+        /// </summary>
+        /// <remarks>
+        /// Test purposes only.
+        /// </remarks>
+        [HttpPost]
+        [Route("purge")]
+        public IActionResult PurgeQueue()
+        {
+            _queue.Purge();
+            return Ok();
         }
 
         private static Request MapRequestFromDto(RequestDto requestDto)
