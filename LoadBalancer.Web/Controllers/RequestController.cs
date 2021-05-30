@@ -29,12 +29,12 @@ namespace LoadBalancer.Web.Controllers
         /// <summary>
         /// Balance SQL query. 
         /// </summary>
-        [HttpGet]
+        [HttpPost]
         [Route("")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<IActionResult> Get([FromQuery, Required] RequestDto requestDto)
+        public async Task<IActionResult> Balance([FromBody, Required] RequestDto requestDto)
         {
             var result = await _service.DistributeQueryAsync(MapRequestFromDto(requestDto));
             return result.Result switch
